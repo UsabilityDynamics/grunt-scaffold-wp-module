@@ -1,0 +1,5 @@
+{
+  "static/scripts/src/name.js": "static/scripts/src/{%= name %}.js",
+  "static/styles/src/name.less": "static/styles/src/{%= name %}.less",
+  "lib/name.main.js": "lib/{%= name %}.main.js"
+}
