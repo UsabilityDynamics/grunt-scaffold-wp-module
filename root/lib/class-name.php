@@ -38,7 +38,6 @@ namespace {%= module_namespace %} {
           trigger_error($error->getMesage() );
         }
 
-
       }
 
     }

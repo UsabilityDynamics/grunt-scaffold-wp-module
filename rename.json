@@ -1,5 +1,6 @@
 {
-  "static/scripts/src/name.js": "static/scripts/src/{%= name %}.js",
+  "static/scripts/src/name.main.js": "static/scripts/src/{%= name %}.main.js",
   "static/styles/src/name.less": "static/styles/src/{%= name %}.less",
-  "lib/name.main.js": "lib/{%= name %}.main.js"
+  "lib/class-name.js": "lib/class-{%= name %}.js",
+  "lib/class-name-utility.js": "lib/class-{%= name %}-utility.js"
 }

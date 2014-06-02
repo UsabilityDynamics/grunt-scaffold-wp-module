@@ -1,71 +1,121 @@
 /**
- * Node.js Module Build
+ * Feature Module Build.
  *
  * @author potanin@UD
- * @version 0.0.2
+ * @version 1.1.2
  * @param grunt
  */
-module.exports = function( grunt ) {
+module.exports = function build( grunt ) {
 
-  grunt.initConfig( {
+  grunt.initConfig({
 
-    pkg: grunt.file.readJSON( 'package.json' ),
+    // Ready Composer Meta.
+    meta: grunt.file.readJSON( 'composer.json' ),
 
-    mochacli: {
-      options: {
-        require: [ 'should' ],
-        reporter: 'list',
-        ui: 'exports'
+    // Read Composer File.
+    settings: grunt.file.readJSON( 'composer.json' ).extra,
+
+    // Locale.
+    pot: {
+      options:{
+        package_name: '<%= settings.name %>',
+        package_version: '<%= settings.version %>',
+        text_domain: '<%= settings.name %>',
+        dest: 'static/languages/',
+        keywords: [ 'gettext', 'ngettext:1,2' ]
       },
-      all: [ 'test/*.js' ]
+      files:{
+        src:  [ 'lib/*.php' ],
+        expand: true
+      }
     },
 
+    // Generate Documentation.
     yuidoc: {
       compile: {
-        name: '<%= pkg.name %>',
-        description: '<%= pkg.description %>',
-        version: '<%= pkg.version %>',
-        url: '<%= pkg.homepage %>',
-        logo: 'http://media.usabilitydynamics.com/logo.png',
+        name: '<%= meta.name %>',
+        description: '<%= meta.description %>',
+        version: '<%= meta.version %>',
+        url: '<%= meta.homepage %>',
         options: {
-          paths: [ "./bin", "./lib" ],
-          outdir: './static/codex'
+          paths: [ 'lib', 'static/scripts/src' ],
+          outdir: 'static/codex/'
         }
       }
     },
 
-    jscoverage: {
-      options: {
-        inputDirectory: 'lib',
-        outputDirectory: './static/lib-cov',
-        highlight: true
+    // Compile LESS.
+    less: {
+      development: {
+        options: {
+          yuicompress: false,
+          relativeUrls: true
+        },
+        files: {
+          'static/styles/wpp.admin.tools.dev.css': [ 'static/styles/src/wpp.admin.tools.dev.less' ]
+        }
+      },
+      production: {
+        options: {
+          yuicompress: true,
+          relativeUrls: true
+        },
+        files: {
+          'static/styles/wpp.admin.tools.css': [ 'static/styles/src/wpp.admin.tools.less' ]
+        }
       }
     },
 
+    // Development Watch.
     watch: {
       options: {
-        interval: 1000,
+        interval: 100,
         debounceDelay: 500
       },
-      docs: {
-        files: [ 'readme.md' ],
-        tasks: [ 'markdown' ]
+      less: {
+        files: [
+          //'static/styles/src/*.*'
+        ],
+        tasks: [ 'less:production' ]
+      },
+      js: {
+        files: [
+          'static/scripts/src/*.*'
+        ],
+        tasks: [ 'uglify:production' ]
       }
     },
 
+    // Uglify Scripts.
+    uglify: {
+      production: {
+        options: {
+          preserveComments: false,
+          wrap: false
+        },
+        files: [
+          {
+            expand: true,
+            cwd: 'static/scripts/src',
+            src: [ '*.js' ],
+            dest: 'static/scripts'
+          }
+        ]
+      }
+    },
+
+    // Generate Markdown.
     markdown: {
       all: {
-        files: [ {
-          expand: true,
-          src: 'readme.md',
-          dest: 'static/',
-          ext: '.html'
-        }
+        files: [
+          {
+            expand: true,
+            src: 'readme.md',
+            dest: 'static/',
+            ext: '.html'
+          }
         ],
         options: {
-          // preCompile: function preCompile( src, context ) {},
-          // postCompile: function postCompile( src, context ) {},
-          templateContext: {},
           markdownOptions: {
             gfm: true,
             codeLines: {
@@ -77,45 +127,43 @@ module.exports = function( grunt ) {
       }
     },
 
-    clean: [],
+    // Clean for Development.
+    clean: {},
 
-    shell: {
-      install: {},
-      update: {}
+    // Usage Tests.
+    mochacli: {
+      options: {
+        requires: [ 'should' ],
+        reporter: 'list',
+        ui: 'exports',
+        bail: false
+      },
+      all: [
+        'test/*.js'
+      ]
     }
 
   });
 
-  // Load tasks
+  // Load NPM Tasks.
   grunt.loadNpmTasks( 'grunt-markdown' );
-  grunt.loadNpmTasks( 'grunt-mocha-cli' );
-  grunt.loadNpmTasks( 'grunt-jscoverage' );
-  grunt.loadNpmTasks( 'grunt-contrib-symlink' );
+  grunt.loadNpmTasks( 'grunt-requirejs' );
   grunt.loadNpmTasks( 'grunt-contrib-yuidoc' );
+  grunt.loadNpmTasks( 'grunt-contrib-uglify' );
   grunt.loadNpmTasks( 'grunt-contrib-watch' );
   grunt.loadNpmTasks( 'grunt-contrib-less' );
+  grunt.loadNpmTasks( 'grunt-contrib-concat' );
   grunt.loadNpmTasks( 'grunt-contrib-clean' );
-  grunt.loadNpmTasks( 'grunt-shell' );
+  grunt.loadNpmTasks( 'grunt-mocha-cli' );
+  grunt.loadNpmTasks( 'grunt-pot' );
 
-  // Build Assets
-  grunt.registerTask( 'default', [ 'markdown', 'yuidoc', 'jscoverage', 'mochacli' ] );
+  // Register NPM Tasks.
+  grunt.registerTask( 'default', [ 'markdown', 'less:production' , 'yuidoc', 'uglify:production' ] );
 
-  // Install environment
-  grunt.registerTask( 'install', [ 'shell:pull', 'shell:install', 'yuidoc'  ] );
+  // Build Distribution.
+  grunt.registerTask( 'distribution', [ 'mochacli:all', 'mochacov:all', 'clean:all', 'markdown', 'less:production', 'uglify:production' ] );
 
-  // Update Environment
-  grunt.registerTask( 'update', [ 'shell:pull', 'shell:update', 'yuidoc'   ] );
-
-  // Prepare distribution
-  grunt.registerTask( 'dist', [ 'clean', 'yuidoc', 'markdown'  ] );
-
-  // Update Documentation
-  grunt.registerTask( 'doc', [ 'yuidoc', 'markdown' ] );
-
-  // Run Tests
-  grunt.registerTask( 'test', [ 'mochacli' ] );
-
-  // Developer Mode
-  grunt.registerTask( 'dev', [ 'watch' ] );
+  // Update Environment.
+  grunt.registerTask( 'update', [ 'clean:update', 'shell:update' ] );
 
 };

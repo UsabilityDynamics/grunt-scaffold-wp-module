@@ -93,6 +93,7 @@ exports.template = function(grunt, init, done) {
       "name": 'usabilitydynamics/' + props.name,
       "version": props.version,
       "keywords": [],
+      "homepage": "",
       "type": "wordpress-module",
       "require": {
         "php": ">=5.3",
