@@ -94,16 +94,9 @@ exports.template = function(grunt, init, done) {
     grunt.file.write( init.destpath( 'composer.json' ), JSON.stringify( {
       "name": 'usabilitydynamics/' + props.name,
       "version": props.version,
-      "keywords": [],
-      "homepage": "",
       "type": "wordpress-module",
-      "require": {
-        "php": ">=5.3",
-        "usabilitydynamics/lib-installer": "master"
-      },
-      "autoload": {
-        "classmap": [ "lib" ]
-      },
+      "homepage": "",
+      "keywords": [],
       "minimum-stability": "dev",
       "repositories": [
         {
@@ -111,11 +104,42 @@ exports.template = function(grunt, init, done) {
           "url": "http://repository.usabilitydynamics.com"
         }
       ],
+      "require": {
+        "php": ">=5.3",
+        "usabilitydynamics/lib-installer": "master"
+      },
+      "require-dev": {},
+      "autoload": {
+        "classmap": [ "lib" ]
+      },
+      "authors": [
+        {
+          "name": "Andy Potanin",
+          "email": "andy.potanin@usabilitydynamics.com",
+          "homepage": "http://usabilitydynamics.com",
+          "role": "Developer"
+        },
+        {
+          "name": "Maxim Peshkov",
+          "email": "maxim.peshkov@usabilitydynamics.com",
+          "homepage": "http://usabilitydynamics.com",
+          "role": "Developer"
+        },
+        {
+          "name": "Anton Korotkov",
+          "email": "anton.korotkov@usabilitydynamics.com",
+          "homepage": "http://usabilitydynamics.com",
+          "role": "Developer"
+        }
+      ],
+      "config": {},
       "extra": {
         "installer-name": ( props.name ).replace( 'wp-module', '' ),
+        "text_domain": ( props.name ).replace( 'wp-module', '' ),
         "main-file": "lib/class" + props.name + ".php",
         "class": ""
-      }
+      },
+      "license": "GNU"
     }, null, 2 ) );
 
     done();

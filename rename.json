@@ -1,5 +1,5 @@
 {
-  "static/scripts/src/name.main.js": "static/scripts/src/{%= name %}.main.js",
+  "static/scripts/src/name.js": "static/scripts/src/{%= name %}.js",
   "static/styles/src/name.less": "static/styles/src/{%= name %}.less",
   "lib/class-name.php": "lib/class-{%= name %}.php",
   "lib/class-name-utility.php": "lib/class-{%= name %}-utility.php"
