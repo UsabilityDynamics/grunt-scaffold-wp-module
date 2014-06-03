@@ -52,7 +52,9 @@ exports.template = function(grunt, init, done) {
       }
     ];
 
-    props.dependencies = {};
+    props.dependencies = {
+      "findup-sync": "~0.1.3"
+    };
 
     props.devDependencies = {
       "grunt-contrib-yuidoc": "~0.5.0",
