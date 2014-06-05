@@ -134,10 +134,21 @@ exports.template = function(grunt, init, done) {
       ],
       "config": {},
       "extra": {
+        "title": {
+          "en_US" : ""
+        },
+        "tagline": {
+          "en_US" : ""
+        },
+        "description": {
+          "en_US" : ""
+        },
+        "image" : '',
+        "minimum_core": {},
         "installer-name": ( props.name ).replace( 'wp-module', '' ),
         "text_domain": ( props.name ).replace( 'wp-module', '' ),
-        "main-file": "lib/class" + props.name + ".php",
-        "class": ""
+        "classmap": "lib/class" + props.name + ".php",
+        "bootstrap": ""
       },
       "license": "GNU"
     }, null, 2 ) );
